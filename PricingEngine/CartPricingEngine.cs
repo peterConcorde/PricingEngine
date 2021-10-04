@@ -23,15 +23,26 @@ namespace PricingEngine
                 throw new ArgumentNullException(nameof(shoppingCart));
             }
 
+
             //Flatten the cart
             var itemGroups = shoppingCart.GroupBy(s => s.SkuId)
                                 .Select(g => CartItem.Create(g.Key, g.Sum(x => x.Quantity)));
 
 
+            // Apply any relevant promotions
+            var promotions = productService.GetProductPromotions(itemGroups.Select(i => i.SkuId));
+
+            (var price, var residualCart) = promotions.Aggregate((price : 0M, cart: itemGroups), 
+                (acc,p) => {
+                    (var promtionPrice, var residualCart) = p.ApplyPromotiom(acc.cart);
+                    return (acc.price + promtionPrice, residualCart);
+                });
+
+            // Add the value of any remaining items
             var details = productService.GetProductDetails(itemGroups.Select(i => i.SkuId));
+            price += residualCart.Select(g => details[g.SkuId] * g.Quantity).Sum();
 
-
-            return itemGroups.Select(g => details[g.SkuId] * g.Quantity).Sum();
+            return price;
         }
     }
 }
