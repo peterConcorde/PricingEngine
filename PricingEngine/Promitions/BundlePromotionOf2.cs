@@ -14,6 +14,26 @@ namespace PricingEngine.Promitions
 
         public BundlePromotionOf2(string item1, string item2, decimal cost)
         {
+            if (string.IsNullOrWhiteSpace(item1))
+            {
+                throw new ArgumentException($"'{nameof(item1)}' cannot be null or empty.", nameof(item1));
+            }
+
+            if (string.IsNullOrWhiteSpace(item2))
+            {
+                throw new ArgumentException($"'{nameof(item2)}' cannot be null or empty.", nameof(item2));
+            }
+
+            if (item1 == item2)
+            {
+                throw new ArgumentException($"'{nameof(item1)}' cannot be the same as {nameof(item2)}.", nameof(item2));
+            }
+
+            if (cost < 0)
+            {
+                throw new ArgumentException(nameof(cost), $"'{nameof(cost)}' must be not be less than zero.");
+            }
+
             this.item1 = item1;
             this.item2 = item2;
             this.cost = cost;
@@ -26,6 +46,11 @@ namespace PricingEngine.Promitions
 
         public (decimal cost, IEnumerable<CartItem> residualCart) ApplyPromotiom(IEnumerable<CartItem> cart)
         {
+            if (cart is null)
+            {
+                throw new ArgumentNullException(nameof(cart));
+            }
+
             var item1Count = CountItems(cart, item1);
             var item2Count = CountItems(cart, item2);
 

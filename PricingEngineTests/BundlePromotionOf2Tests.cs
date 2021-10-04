@@ -15,11 +15,41 @@ namespace PricingEngineTests
         [Fact]
         public void CanCreate()
         {
-            var p = new BundlePromotionOf2("test", "test", 10.46M);
+            var p = new BundlePromotionOf2("test1", "test2", 10.46M);
             Assert.NotNull(p);
         }
 
-  
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void FirstArgInvalidCheck(string value)
+        {
+            Assert.Throws<ArgumentException>(() => new BundlePromotionOf2(value, "test", 10.46M));
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void SecondArgNullCheck(string value)
+        {
+            Assert.Throws<ArgumentException>(() => new BundlePromotionOf2("test", value,  10.46M));
+        }
+
+        [Fact]
+        public void SkusMustBeDifferentArgNullCheck()
+        {
+            Assert.Throws<ArgumentException>(() => new BundlePromotionOf2("test", "test", 10.46M));
+        }
+
+        [Theory]
+        [InlineData(-0.01)]
+        [InlineData(-37)]
+        public void ThridArgOutOfRangeCheck(decimal value)
+        {
+            Assert.Throws<ArgumentException>(() => new BundlePromotionOf2("test", "test", value));
+        }
 
         [Theory]
         [InlineData("A", "B", 26.59, 79.77)]
@@ -27,7 +57,7 @@ namespace PricingEngineTests
         [InlineData("A", "D", 40, 160)]
         [InlineData("A", "E", 80, 0)]
         [InlineData("C", "D", 80, 320)]
-        [InlineData("E", "E", 26.50, 0)]
+        [InlineData("E", "F", 26.50, 0)]
         public void CanCalulatePromotionWithValue(string Sku1, string sku2, decimal price, decimal expected)
         {
             var cart = new List<CartItem>
@@ -54,7 +84,7 @@ namespace PricingEngineTests
         [InlineData("A", "D", 40, 8)]
         [InlineData("A", "E", 80, 16)]
         [InlineData("C", "D", 80, 8)]
-        [InlineData("E", "E", 26.50, 16)]
+        [InlineData("E", "F", 26.50, 16)]
         public void CanReduceCartTotalSize(string sku1, string sku2, decimal price, int expected)
         {
             var cart = new List<CartItem>
@@ -83,7 +113,7 @@ namespace PricingEngineTests
         [InlineData("A", "D", 40, 0)]
         [InlineData("A", "E", 80, 4)]
         [InlineData("C", "D", 80, 1)]
-        [InlineData("E", "E", 26.50, 0)]
+        [InlineData("E", "F", 26.50, 0)]
         public void CanReduceCartFirstTargetSize(string sku1, string sku2, decimal price, int expected)
         {
             var cart = new List<CartItem>
