@@ -36,14 +36,12 @@ namespace PricingEngineTests
         [InlineData(3, 5, 1, 1, 280)]
         public void ApplyPromotionSet(int numberOfA, int numberOfB, int numberOfC, int numberOfD, decimal expected)
         {
-            var cart = new List<CartItem>
-            {
-                CartItem.Create("A",numberOfA),
-                CartItem.Create("B",numberOfB),
-                CartItem.Create("C",numberOfC),
-                CartItem.Create("D",numberOfD),  
-            };
-
+            var cart = new List<CartItem>();
+            if (numberOfA > 0) cart.Add(CartItem.Create("A", numberOfA));
+            if (numberOfB > 0) cart.Add(CartItem.Create("B", numberOfB));
+            if (numberOfC > 0) cart.Add(CartItem.Create("C", numberOfC));
+            if (numberOfD > 0) cart.Add(CartItem.Create("D", numberOfD));
+ 
             mockProdcutService.Setup(m => m.GetProductDetails(It.IsAny<IEnumerable<string>>())).Returns(Prices);
             mockProdcutService.Setup(m => m.GetProductPromotions(It.IsAny<IEnumerable<string>>())).Returns(ActivePromotions);
 
