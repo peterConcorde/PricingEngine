@@ -12,12 +12,17 @@ namespace PricingEngine
 
         public CartPricingEngine(IProductService productService)
         {
-            this.productService = productService;
+            this.productService = productService ?? throw new ArgumentNullException(nameof(productService));
         }
 
 
         public decimal ComputePrice(IEnumerable<CartItem> shoppingCart)
         {
+            if (shoppingCart is null)
+            {
+                throw new ArgumentNullException(nameof(shoppingCart));
+            }
+
             //Flatten the cart
             var itemGroups = shoppingCart.GroupBy(s => s.SkuId)
                                 .Select(g => CartItem.Create(g.Key, g.Sum(x => x.Quantity)));

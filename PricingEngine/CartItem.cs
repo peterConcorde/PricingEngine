@@ -13,6 +13,16 @@ namespace PricingEngine
 
         public CartItem(string skuId, int quantity)
         {
+            if (string.IsNullOrWhiteSpace(skuId))
+            {
+                throw new ArgumentException($"'{nameof(skuId)}' cannot be null or empty.", nameof(skuId));
+            }
+
+            if (quantity <= 0 )
+            {
+                throw new ArgumentException($"'{nameof(quantity)}' must be greqater than zero.", nameof(quantity));
+            }
+
             SkuId = skuId;
             Quantity = quantity;
         }
