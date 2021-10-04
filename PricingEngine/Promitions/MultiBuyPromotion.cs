@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PricingEngine.Promitions
 {
+    /// <summary>
+    /// Applies a discount when an item is included multiple times
+    /// </summary>
     public class MultiBuyPromotion : IPromotion
     {
         private readonly string skuid;
@@ -40,7 +41,11 @@ namespace PricingEngine.Promitions
             this.pricePerSet = pricePerSet;
         }
 
-
+        /// <summary>
+        /// Apply the promotion to a collection of items
+        /// </summary>
+        /// <param name="cart"></param>
+        /// <returns></returns>
         public (decimal cost, IEnumerable<CartItem> residualCart) ApplyPromotiom(IEnumerable<CartItem> cart)
         {
             if (cart is null)
@@ -54,7 +59,7 @@ namespace PricingEngine.Promitions
             var price = (itemCount / quantity) * pricePerSet;
             var remainder = itemCount % quantity;
 
-            var residualCart =  cart.Where(i => i.SkuId != skuid);
+            var residualCart = cart.Where(i => i.SkuId != skuid);
 
             if (remainder > 0)
             {

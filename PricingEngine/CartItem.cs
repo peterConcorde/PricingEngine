@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PricingEngine
 {
+    /// <summary>
+    /// An item in a shopping cart indentified by a Sku Id
+    /// </summary>
     public class CartItem
     {
         public string SkuId { get; private set; }
@@ -18,7 +17,7 @@ namespace PricingEngine
                 throw new ArgumentException($"'{nameof(skuId)}' cannot be null or empty.", nameof(skuId));
             }
 
-            if (quantity <= 0 )
+            if (quantity <= 0)
             {
                 throw new ArgumentException($"'{nameof(quantity)}' must be greqater than zero.", nameof(quantity));
             }
