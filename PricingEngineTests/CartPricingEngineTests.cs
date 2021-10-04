@@ -31,7 +31,7 @@ namespace PricingEngineTests
         #region Scenarios 
 
         [Theory]
-        [InlineData(1,2,3,0, 100)]
+        [InlineData(1, 1, 1, 0, 100)]
         [InlineData(5, 5, 1, 0, 370)]
         [InlineData(3, 5, 1, 1, 280)]
         public void ApplyPromotionSet(int numberOfA, int numberOfB, int numberOfC, int numberOfD, decimal expected)
