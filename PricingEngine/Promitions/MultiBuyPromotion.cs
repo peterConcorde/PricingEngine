@@ -20,6 +20,21 @@ namespace PricingEngine.Promitions
         /// <param name="pricePerSet"> Price for the deal</param>
         public MultiBuyPromotion(string skuid, int quantity, decimal pricePerSet)
         {
+            if (string.IsNullOrWhiteSpace(skuid))
+            {
+                throw new ArgumentException($"'{nameof(skuid)}' cannot be null or empty.", nameof(skuid));
+            }
+
+            if (quantity <= 0)
+            {
+                throw new ArgumentException($"'{nameof(quantity)}' must be greater than zero.", nameof(quantity));
+            }
+
+            if (pricePerSet <= 0)
+            {
+                throw new ArgumentException($"'{nameof(pricePerSet)}' must not be less than zero.", nameof(pricePerSet));
+            }
+
             this.skuid = skuid;
             this.quantity = quantity;
             this.pricePerSet = pricePerSet;
@@ -28,6 +43,11 @@ namespace PricingEngine.Promitions
 
         public (decimal cost, IEnumerable<CartItem> residualCart) ApplyPromotiom(IEnumerable<CartItem> cart)
         {
+            if (cart is null)
+            {
+                throw new ArgumentNullException(nameof(cart));
+            }
+
             var itemCount = cart.Where(i => i.SkuId == this.skuid)
                                     .Sum(i => i.Quantity);
 

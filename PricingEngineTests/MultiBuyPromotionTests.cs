@@ -19,7 +19,30 @@ namespace PricingEngineTests
             Assert.NotNull(p);
         }
 
-  
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void FirstArgInvalidCheck(string value)
+        {
+            Assert.Throws<ArgumentException>(() => new MultiBuyPromotion(value, 4, 10.46M));
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-37)]
+        public void QuntityMustBePosative(int value)
+        {
+            Assert.Throws<ArgumentException>(() => new MultiBuyPromotion("test", value, 48M));
+        }
+
+        [Theory]
+        [InlineData(-0.01)]
+        [InlineData(-37)]
+        public void PrinceMustNotBeNegative(decimal value)
+        {
+            Assert.Throws<ArgumentException>(() => new MultiBuyPromotion("test", 4, value));
+        }
 
         [Theory]
         [InlineData("A", 1, 45, 180)]
@@ -107,6 +130,13 @@ namespace PricingEngineTests
             var result = newCart.Where(i => i.SkuId == skuId).Sum(i => i.Quantity);
 
             Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void NullCheckForCart()
+        {
+            var p = new MultiBuyPromotion("test1", 4, 25);
+            Assert.Throws<ArgumentNullException>(() => p.ApplyPromotiom(null));
         }
 
     }

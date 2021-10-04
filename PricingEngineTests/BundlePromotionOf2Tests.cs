@@ -136,5 +136,12 @@ namespace PricingEngineTests
             Assert.Equal(expected, result);
         }
 
+        [Fact]
+        public void NullCheckForCart()
+        {
+            var p = new BundlePromotionOf2("test1", "test2", 25);
+            Assert.Throws<ArgumentNullException>(() => p.ApplyPromotiom(null));
+        }
+
     }
 }
