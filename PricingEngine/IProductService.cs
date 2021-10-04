@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PricingEngine.Promitions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace PricingEngine
         IEnumerable<string> GetProducts();
 
         IDictionary<string, decimal> GetProductDetails(IEnumerable<string> prodcuts);
+
+        IEnumerable<IPromotion> GetProductPromotions(IEnumerable<string> prodcuts);
 
 
     }
