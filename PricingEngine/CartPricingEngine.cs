@@ -16,9 +16,13 @@ namespace PricingEngine
         }
 
 
-        public decimal ComputePrice(IEnumerable<string> shoppingCart)
+        public decimal ComputePrice(IEnumerable<CartItem> shoppingCart)
         {
-            var itemGroups = shoppingCart.GroupBy(s => s).Select(g => (SkuId : g.Key, Quantity : g.Count()));
+            //Flatten the cart
+            var itemGroups = shoppingCart.GroupBy(s => s.SkuId)
+                                .Select(g => CartItem.Create(g.Key, g.Sum(x => x.Quantity)));
+
+
             var details = productService.GetProductDetails(itemGroups.Select(i => i.SkuId));
 
 

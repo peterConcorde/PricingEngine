@@ -9,6 +9,8 @@ namespace PricingEngineTests
 {
     public class CartPricingEngineTests
     {
+
+        #region data
         private IDictionary<string, decimal> Prices { get; } = new Dictionary<string, decimal>
         {
             { "A" , 50 },
@@ -17,26 +19,63 @@ namespace PricingEngineTests
             { "D" , 15 }
         };
 
+        #endregion
 
+        private readonly Mock<IProductService> mockProdcutService;
+
+        public CartPricingEngineTests()
+        {
+            mockProdcutService = new Mock<IProductService>();
+        }
+
+
+        private IPricingEngine CreateEngine() => new CartPricingEngine(mockProdcutService.Object);
 
         [Fact]
         public void ComputeCartVauleWithNoDeals()
         {
-            Mock<IProductService> mockProdcutService = new();
             mockProdcutService.Setup(m => m.GetProductDetails(It.IsAny<IEnumerable<string>>())).Returns(Prices);
-            IPricingEngine pe = new CartPricingEngine(mockProdcutService.Object);
 
-            var cart = new List<string>
+            var cart = new List<CartItem>
             {
-                "A", "A","C","D","C","A","A", "B"
+                CartItem.Create("A",1),
+                CartItem.Create("A",1),
+                CartItem.Create("C",1),
+                CartItem.Create("D",1),
+                CartItem.Create("C",1),
+                CartItem.Create("A",1),
+                CartItem.Create("A",1),
+                CartItem.Create("B",1)
             };
 
             decimal expected = 285;
 
-            var result = pe.ComputePrice(cart);
-
-            Assert.Equal(expected, result);
-            
+            var result = CreateEngine().ComputePrice(cart);
+            Assert.Equal(expected, result);          
         }
+
+        [Fact]
+        public void ComputeCartVauleWithNoDealsComplexCart()
+        {
+            mockProdcutService.Setup(m => m.GetProductDetails(It.IsAny<IEnumerable<string>>())).Returns(Prices);
+
+            var cart = new List<CartItem>
+            {
+                CartItem.Create("A",3),
+                CartItem.Create("C",1),
+                CartItem.Create("D",4),
+                CartItem.Create("C",1),
+                CartItem.Create("A",1),
+                CartItem.Create("B",1),
+                CartItem.Create("B",2)
+            };
+
+            decimal expected = 390;
+
+            var result = CreateEngine().ComputePrice(cart);
+            Assert.Equal(expected, result);
+        }
+
+
     }
 }

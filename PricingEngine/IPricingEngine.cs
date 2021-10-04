@@ -8,6 +8,6 @@ namespace PricingEngine
 {
     public interface IPricingEngine
     {
-        decimal ComputePrice(IEnumerable<string> shoppingCart);
+        decimal ComputePrice(IEnumerable<CartItem> shoppingCart);
     }
 }
