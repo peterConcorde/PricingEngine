@@ -3,7 +3,7 @@ using System;
 using Xunit;
 using Moq;
 using System.Collections.Generic;
-
+using PricingEngine.Promitions;
 
 namespace PricingEngineTests
 {
@@ -19,6 +19,39 @@ namespace PricingEngineTests
             { "D" , 15 }
         };
 
+        private IEnumerable<IPromotion> ActivePromotions { get; } = new List<IPromotion>
+        {
+            PromotionFactory.CreateMultiBuyPromotion("A", 3, 130),
+            PromotionFactory.CreateMultiBuyPromotion("B", 2, 45),
+            PromotionFactory.CreateBundleOf2Promotion("C", "D", 30)
+        };
+
+        #endregion
+
+        #region Scenarios 
+
+        [Theory]
+        [InlineData(1,2,3,0, 100)]
+        [InlineData(5, 5, 1, 0, 370)]
+        [InlineData(3, 5, 1, 1, 280)]
+        public void ApplyPromotionSet(int numberOfA, int numberOfB, int numberOfC, int numberOfD, decimal expected)
+        {
+            var cart = new List<CartItem>
+            {
+                CartItem.Create("A",numberOfA),
+                CartItem.Create("B",numberOfB),
+                CartItem.Create("C",numberOfC),
+                CartItem.Create("D",numberOfD),  
+            };
+
+            mockProdcutService.Setup(m => m.GetProductDetails(It.IsAny<IEnumerable<string>>())).Returns(Prices);
+            mockProdcutService.Setup(m => m.GetProductPromotions(It.IsAny<IEnumerable<string>>())).Returns(ActivePromotions);
+
+            var result = CreateEngine().ComputePrice(cart);
+            Assert.Equal(expected, result);
+        }
+
+
         #endregion
 
         private readonly Mock<IProductService> mockProdcutService;
@@ -28,6 +61,7 @@ namespace PricingEngineTests
             mockProdcutService = new Mock<IProductService>();
         }
 
+        #region Test without promtions
 
         private IPricingEngine CreateEngine() => new CartPricingEngine(mockProdcutService.Object);
 
@@ -94,6 +128,8 @@ namespace PricingEngineTests
             var result = CreateEngine().ComputePrice(cart);
             Assert.Equal(expected, result);
         }
+
+        #endregion
 
 
     }
